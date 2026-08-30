@@ -313,7 +313,8 @@
   }, { once: true });
 
   // contagem regressiva — quarta-feira, 7h, horário de Brasília (UTC-3)
-  const target = new Date('2026-09-02T07:00:00-03:00').getTime();
+  // construído com Date.UTC em vez de string ISO, pra evitar bugs de parsing no Safari/iOS
+  const target = Date.UTC(2026, 8, 2, 10, 0, 0); // 07:00 em Brasília = 10:00 UTC
   const letter = document.getElementById('letter');
   const elD = document.getElementById('d');
   const elH = document.getElementById('h');
