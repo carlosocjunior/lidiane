@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Para você</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,500&family=Karla:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --night: #1B1533;
+    --night-2: #2E2350;
+    --gold: #E3B23C;
+    --gold-soft: #F0CE7A;
+    --cream: #F6F0E4;
+    --lilac: #B9A9D9;
+    --wax: #8B2E3C;
+  }
+
+  *{ box-sizing: border-box; }
+
+  html, body{
+    margin: 0;
+    min-height: 100vh;
+    background:
+      radial-gradient(ellipse 60% 40% at 50% 0%, rgba(227,178,60,0.10), transparent 60%),
+      linear-gradient(180deg, var(--night) 0%, #120D24 100%);
+    font-family: 'Karla', sans-serif;
+    color: var(--cream);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow-x: hidden;
+  }
+
+  /* estrelinhas discretas de fundo */
+  .sky{
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .star{
+    position: absolute;
+    width: 3px; height: 3px;
+    background: var(--cream);
+    border-radius: 50%;
+    opacity: .5;
+    animation: twinkle 4s ease-in-out infinite;
+  }
+  @keyframes twinkle{
+    0%, 100%{ opacity: .15; }
+    50%{ opacity: .7; }
+  }
+
+  .stage{
+    position: relative;
+    z-index: 1;
+    width: min(92vw, 460px);
+    padding: 40px 0;
+  }
+
+  /* ENVELOPE */
+  .envelope{
+    position: relative;
+    width: 100%;
+    aspect-ratio: 3 / 2;
+    cursor: pointer;
+  }
+
+  .envelope-body{
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(155deg, var(--night-2), #24193F);
+    border-radius: 10px;
+    box-shadow: 0 30px 60px -20px rgba(0,0,0,.6);
+    overflow: hidden;
+    border: 1px solid rgba(227,178,60,0.18);
+  }
+
+  .envelope-body::before,
+  .envelope-body::after{
+    content: "";
+    position: absolute;
+    top: 0;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(160deg, rgba(255,255,255,0.05), transparent 60%);
+  }
+  .envelope-body::after{ right: 0; transform: scaleX(-1); }
+
+  .flap{
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 62%;
+    background: linear-gradient(150deg, #352a57, #241a41);
+    clip-path: polygon(0 0, 100% 0, 50% 100%);
+    transform-origin: top center;
+    transition: transform 1.1s cubic-bezier(.6,-0.1,.2,1);
+    z-index: 3;
+    border-bottom: 1px solid rgba(227,178,60,0.15);
+  }
+
+  .seal{
+    position: absolute;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 58px; height: 58px;
+    background: radial-gradient(circle at 35% 30%, #b5445a, var(--wax) 70%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 22px;
+    color: var(--gold-soft);
+    box-shadow: 0 6px 14px rgba(0,0,0,.45), inset 0 -3px 6px rgba(0,0,0,.35);
+    z-index: 4;
+    transition: opacity .3s ease, transform .5s ease;
+  }
+
+  .hint{
+    position: absolute;
+    bottom: 22px;
+    left: 0; right: 0;
+    text-align: center;
+    font-size: 12.5px;
+    letter-spacing: .04em;
+    color: var(--lilac);
+    z-index: 2;
+    transition: opacity .4s ease;
+  }
+
+  /* estado aberto */
+  .envelope.open .flap{
+    transform: rotateX(180deg);
+  }
+  .envelope.open .seal{
+    opacity: 0;
+    transform: translate(-50%,-50%) scale(.4);
+  }
+  .envelope.open .hint{ opacity: 0; }
+  .envelope.open{ cursor: default; }
+
+  /* CARTA / MODAL */
+  .letter{
+    position: absolute;
+    inset: 6% 5%;
+    background: linear-gradient(180deg, #FAF5E9, var(--cream));
+    color: #2B2140;
+    border-radius: 6px;
+    padding: 26px 24px 22px;
+    z-index: 2;
+    opacity: 0;
+    transform: translateY(14px) scale(.97);
+    transition: opacity .7s ease .35s, transform .7s cubic-bezier(.2,.7,.3,1) .35s;
+    text-align: center;
+  }
+
+  .envelope.open .letter{
+    opacity: 1;
+    transform: translateY(-4%) scale(1.06);
+  }
+
+  .eyebrow-line{
+    display: block;
+    width: 34px;
+    height: 2px;
+    background: var(--wax);
+    margin: 0 auto 14px;
+    border-radius: 2px;
+  }
+
+  .letter h1{
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-style: italic;
+    font-size: clamp(20px, 5.4vw, 26px);
+    line-height: 1.35;
+    margin: 0 0 10px;
+    color: #241a41;
+  }
+
+  .letter p.msg{
+    font-size: 14px;
+    line-height: 1.6;
+    color: #4b3f63;
+    margin: 0 0 20px;
+    max-width: 30ch;
+    margin-inline: auto;
+  }
+
+  .countdown{
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    margin: 4px 0 16px;
+  }
+
+  .unit{
+    background: #241a41;
+    color: var(--gold-soft);
+    border-radius: 8px;
+    width: 58px;
+    padding: 8px 0 6px;
+    position: relative;
+  }
+  .unit .num{
+    font-family: 'Fraunces', serif;
+    font-size: 22px;
+    font-weight: 600;
+    display: block;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+  .unit .lbl{
+    font-size: 9px;
+    letter-spacing: .08em;
+    color: var(--lilac);
+    display: block;
+    margin-top: 4px;
+  }
+
+  .datetime{
+    font-size: 12px;
+    color: #6d5f8a;
+    margin: 0 0 4px;
+  }
+  .datetime strong{ color: #2B2140; font-weight: 700; }
+
+  .signature{
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 14px;
+    color: #8B2E3C;
+    margin-top: 14px;
+  }
+
+  .arrived{
+    display: none;
+  }
+  .letter.finished .countdown-wrap{ display: none; }
+  .letter.finished .arrived{
+    display: block;
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 18px;
+    color: var(--wax);
+    margin: 8px 0 4px;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .flap, .letter, .seal, .hint{ transition: none !important; }
+    .star{ animation: none !important; }
+  }
+
+  @media (max-width: 380px){
+    .unit{ width: 50px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="sky" id="sky"></div>
+
+<div class="stage">
+  <div class="envelope" id="envelope">
+    <div class="envelope-body">
+      <div class="letter" id="letter">
+        <span class="eyebrow-line"></span>
+        <h1>Mais um sonho prestes<br>a se realizar.</h1>
+        <p class="msg">Assim como vc, eu tbm estou ansioso e feliz por suas conquistas. Falta pouco — e eu contando cada segundo ao seu lado.</p>
+
+        <div class="countdown-wrap">
+          <div class="countdown" id="countdown">
+            <div class="unit"><span class="num" id="d">00</span><span class="lbl">dias</span></div>
+            <div class="unit"><span class="num" id="h">00</span><span class="lbl">horas</span></div>
+            <div class="unit"><span class="num" id="m">00</span><span class="lbl">min</span></div>
+            <div class="unit"><span class="num" id="s">00</span><span class="lbl">seg</span></div>
+          </div>
+          <p class="datetime">Quarta-feira, <strong>7h</strong> · horário de Brasília</p>
+        </div>
+
+        <p class="arrived">Chegou a hora. Parabéns, meu amor. 🤍</p>
+
+        <p class="signature">— com todo o meu amor</p>
+      </div>
+    </div>
+    <div class="flap"><div class="seal">Li</div></div>
+    <p class="hint">toque para abrir</p>
+  </div>
+</div>
+
+<script>
+  // estrelas de fundo
+  const sky = document.getElementById('sky');
+  for(let i=0;i<40;i++){
+    const s = document.createElement('div');
+    s.className = 'star';
+    s.style.left = Math.random()*100+'%';
+    s.style.top = Math.random()*100+'%';
+    s.style.animationDelay = (Math.random()*4)+'s';
+    sky.appendChild(s);
+  }
+
+  // abrir envelope
+  const envelope = document.getElementById('envelope');
+  envelope.addEventListener('click', () => {
+    envelope.classList.add('open');
+  }, { once: true });
+
+  // contagem regressiva — quarta-feira, 7h, horário de Brasília (UTC-3)
+  const target = new Date('2026-09-02T07:00:00-03:00').getTime();
+  const letter = document.getElementById('letter');
+  const elD = document.getElementById('d');
+  const elH = document.getElementById('h');
+  const elM = document.getElementById('m');
+  const elS = document.getElementById('s');
+
+  function pad(n){ return String(n).padStart(2,'0'); }
+
+  function tick(){
+    const now = Date.now();
+    const diff = target - now;
+
+    if(diff <= 0){
+      letter.classList.add('finished');
+      clearInterval(timer);
+      return;
+    }
+
+    const d = Math.floor(diff / 86400000);
+    const h = Math.floor((diff % 86400000) / 3600000);
+    const m = Math.floor((diff % 3600000) / 60000);
+    const s = Math.floor((diff % 60000) / 1000);
+
+    elD.textContent = pad(d);
+    elH.textContent = pad(h);
+    elM.textContent = pad(m);
+    elS.textContent = pad(s);
+  }
+
+  tick();
+  const timer = setInterval(tick, 1000);
+</script>
+
+</body>
+</html>
